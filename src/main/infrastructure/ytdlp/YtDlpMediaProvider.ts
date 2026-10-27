@@ -1,5 +1,7 @@
+import { unlink } from 'fs/promises'
 import { mkdir, readFile, readdir, rename, rm, writeFile } from 'fs/promises'
 import path from 'path'
+import { buildAudioEmbedArgs, probeAudioTags } from '../ffmpeg/probeAudioTags'
 import type {
   DownloadProgress,
   Transcript,
@@ -259,6 +261,10 @@ export class YtDlpMediaProvider implements IMediaProvider {
       request.options.outputDirectory,
       `${sanitizeFilename(request.title)} [${request.videoId}].%(ext)s`
     )
+
+    const embedThumbnail = request.options.embedThumbnail !== false
+    const embedMetadata = request.options.embedMetadata !== false
+
     const args = [
       '--ffmpeg-location',
       ffmpegDir,
@@ -270,6 +276,12 @@ export class YtDlpMediaProvider implements IMediaProvider {
       request.options.format,
       '--audio-quality',
       audioQualityToYtDlp(request.options.quality),
+      ...buildAudioEmbedArgs({
+        format: request.options.format,
+        embedThumbnail,
+        embedMetadata,
+        albumTitle: request.options.albumTitle
+      }),
       '--newline',
       '--progress',
       '--progress-template',
@@ -292,6 +304,14 @@ export class YtDlpMediaProvider implements IMediaProvider {
       throw new AppError(ErrorCode.CANCELED, 'Download canceled', { retryable: true })
     if (result.exitCode !== 0) throw mapYtDlpError(result.stderr, result.stdout)
 
+    this.emitProgress(onProgress, {
+      jobId,
+      state: 'processing',
+      stage: 'postprocess',
+      percent: 95,
+      message: 'Verifying audio tags'
+    })
+
     const outputs = await this.findOutputs(request.options.outputDirectory, request.videoId, [
       request.options.format
     ])
@@ -300,7 +320,60 @@ export class YtDlpMediaProvider implements IMediaProvider {
         retryable: true
       })
     }
+
+    await this.cleanupSidecarThumbnails(request.options.outputDirectory, request.videoId)
+
+    const audioPath = outputs[0]!
+    const ffprobe = this.tools.resolve('ffprobe')
+    if (await this.tools.exists(ffprobe)) {
+      const probe = await probeAudioTags(this.runner, ffprobe, audioPath, signal)
+      if (embedThumbnail && !probe.hasAttachedPicture) {
+        this.logger.warn('Audio cover art was requested but not found in output', {
+          jobId,
+          audioPath
+        })
+        this.emitProgress(onProgress, {
+          jobId,
+          state: 'processing',
+          stage: 'postprocess',
+          percent: 98,
+          message: 'Warning: cover art was not embedded'
+        })
+      }
+      if (embedMetadata && !probe.title) {
+        this.logger.warn('Audio metadata was requested but title tag is missing', {
+          jobId,
+          audioPath
+        })
+      }
+    }
+
+    this.emitProgress(onProgress, {
+      jobId,
+      state: 'completed',
+      stage: 'finalize',
+      percent: 100,
+      filename: audioPath
+    })
     return outputs
+  }
+
+  /** Remove leftover thumbnail sidecars after successful embed (do not keep loose JPGs). */
+  private async cleanupSidecarThumbnails(directory: string, videoId: string): Promise<void> {
+    try {
+      const files = await readdir(directory)
+      const sidecars = files.filter(
+        (f) =>
+          f.includes(`[${videoId}]`) &&
+          /\.(jpe?g|png|webp)$/i.test(f) &&
+          !/\.(mp3|m4a|opus|webm|mp4|mkv)$/i.test(f)
+      )
+      for (const file of sidecars) {
+        await unlink(path.join(directory, file)).catch(() => undefined)
+      }
+    } catch {
+      // nonfatal
+    }
   }
 
   private async downloadTranscript(
@@ -601,24 +674,44 @@ export class YtDlpMediaProvider implements IMediaProvider {
       })
 
       try {
-        const itemOutputs = await this.downloadVideo(
-          {
-            action: 'video',
-            url: entry.url,
-            videoId: entry.id,
-            title: entry.title,
-            options: {
-              qualityMode: request.options.qualityMode,
-              height: request.options.height,
-              container: request.options.container,
-              embedMetadata: true,
-              outputDirectory: folder
-            }
-          },
-          jobId,
-          signal,
-          onProgress
-        )
+        const itemOutputs = request.options.asAudio
+          ? await this.downloadAudio(
+              {
+                action: 'audio',
+                url: entry.url,
+                videoId: entry.id,
+                title: entry.title,
+                options: {
+                  format: request.options.audioFormat ?? 'mp3',
+                  quality: request.options.audioQuality ?? 'vbr_high',
+                  outputDirectory: folder,
+                  embedThumbnail: request.options.embedThumbnail !== false,
+                  embedMetadata: request.options.embedMetadata !== false,
+                  albumTitle: request.title || playlist.title
+                }
+              },
+              jobId,
+              signal,
+              onProgress
+            )
+          : await this.downloadVideo(
+              {
+                action: 'video',
+                url: entry.url,
+                videoId: entry.id,
+                title: entry.title,
+                options: {
+                  qualityMode: request.options.qualityMode,
+                  height: request.options.height,
+                  container: request.options.container,
+                  embedMetadata: true,
+                  outputDirectory: folder
+                }
+              },
+              jobId,
+              signal,
+              onProgress
+            )
         // Rename to indexed filename
         for (const out of itemOutputs) {
           const ext = path.extname(out).slice(1)

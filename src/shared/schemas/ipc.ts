@@ -27,7 +27,11 @@ export const videoDownloadOptionsSchema = z.object({
 export const audioDownloadOptionsSchema = z.object({
   format: audioFormatSchema,
   quality: audioQualitySchema,
-  outputDirectory: z.string().min(1)
+  outputDirectory: z.string().min(1),
+  embedThumbnail: z.boolean().default(true),
+  embedMetadata: z.boolean().default(true),
+  /** When downloading from a playlist, optional album tag (playlist title). */
+  albumTitle: z.string().optional()
 })
 
 export const transcriptDownloadOptionsSchema = z.object({
@@ -47,7 +51,13 @@ export const playlistDownloadOptionsSchema = z.object({
   qualityMode: qualityModeSchema,
   height: z.number().int().positive().optional(),
   container: videoContainerSchema,
-  outputDirectory: z.string().min(1)
+  outputDirectory: z.string().min(1),
+  /** Download each entry as audio instead of video. */
+  asAudio: z.boolean().default(false),
+  audioFormat: audioFormatSchema.optional(),
+  audioQuality: audioQualitySchema.optional(),
+  embedThumbnail: z.boolean().default(true),
+  embedMetadata: z.boolean().default(true)
 })
 
 const youtubeUrlSchema = z.string().min(1).max(2048)
@@ -132,6 +142,8 @@ export const settingsPatchSchema = z
     preferredContainer: videoContainerSchema.optional(),
     preferredAudioFormat: audioFormatSchema.optional(),
     preferredAudioQuality: audioQualitySchema.optional(),
+    embedAudioThumbnail: z.boolean().optional(),
+    embedAudioMetadata: z.boolean().optional(),
     preferredTranscriptLanguage: z.string().optional(),
     existingFilePolicy: existingFilePolicySchema.optional(),
     maxConcurrentDownloads: z.number().int().min(1).max(3).optional(),

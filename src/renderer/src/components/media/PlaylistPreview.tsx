@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import {
   Dialog,
   DialogContent,
@@ -32,6 +33,9 @@ export function PlaylistPreview({ playlist }: { playlist: PlaylistMetadata }): R
     typeof settings?.preferredVideoQuality === 'number' ? settings.preferredVideoQuality : 1080
   )
   const [container, setContainer] = useState<VideoContainer>(settings?.preferredContainer ?? 'auto')
+  const [asAudio, setAsAudio] = useState(false)
+  const [embedAudioCover, setEmbedAudioCover] = useState(settings?.embedAudioThumbnail ?? true)
+  const [embedAudioMetadata, setEmbedAudioMetadata] = useState(settings?.embedAudioMetadata ?? true)
   const parentRef = useRef<HTMLDivElement>(null)
 
   const virtualizer = useVirtualizer({
@@ -61,7 +65,12 @@ export function PlaylistPreview({ playlist }: { playlist: PlaylistMetadata }): R
         qualityMode,
         height: qualityMode === 'best' ? undefined : height,
         container,
-        outputDirectory
+        outputDirectory,
+        asAudio,
+        audioFormat: settings?.preferredAudioFormat ?? 'mp3',
+        audioQuality: settings?.preferredAudioQuality ?? 'vbr_high',
+        embedThumbnail: embedAudioCover,
+        embedMetadata: embedAudioMetadata
       }
     })
     if (res.ok) {
@@ -181,18 +190,44 @@ export function PlaylistPreview({ playlist }: { playlist: PlaylistMetadata }): R
                 />
               )}
             </div>
-            <div className="space-y-2">
-              <Label>{t.dialog.container}</Label>
-              <select
-                className="flex h-10 w-full rounded-md border border-input bg-card px-3 text-sm"
-                value={container}
-                onChange={(e) => setContainer(e.target.value as VideoContainer)}
-              >
-                <option value="auto">{t.dialog.containerAuto}</option>
-                <option value="mp4">MP4</option>
-                <option value="mkv">MKV</option>
-              </select>
+            {!asAudio && (
+              <div className="space-y-2">
+                <Label>{t.dialog.container}</Label>
+                <select
+                  className="flex h-10 w-full rounded-md border border-input bg-card px-3 text-sm"
+                  value={container}
+                  onChange={(e) => setContainer(e.target.value as VideoContainer)}
+                >
+                  <option value="auto">{t.dialog.containerAuto}</option>
+                  <option value="mp4">MP4</option>
+                  <option value="mkv">MKV</option>
+                </select>
+              </div>
+            )}
+            <div className="flex items-center justify-between">
+              <Label htmlFor="pl-as-audio">{t.dialog.downloadAsAudio}</Label>
+              <Switch id="pl-as-audio" checked={asAudio} onCheckedChange={setAsAudio} />
             </div>
+            {asAudio && (
+              <>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="pl-cover">{t.dialog.embedAudioCover}</Label>
+                  <Switch
+                    id="pl-cover"
+                    checked={embedAudioCover}
+                    onCheckedChange={setEmbedAudioCover}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="pl-meta">{t.dialog.embedAudioMetadata}</Label>
+                  <Switch
+                    id="pl-meta"
+                    checked={embedAudioMetadata}
+                    onCheckedChange={setEmbedAudioMetadata}
+                  />
+                </div>
+              </>
+            )}
             <div className="space-y-2">
               <Label>{t.dialog.outputDir}</Label>
               <div className="flex gap-2">

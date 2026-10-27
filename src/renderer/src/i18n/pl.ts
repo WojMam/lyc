@@ -69,7 +69,10 @@ export const pl = {
     preferManual: 'Preferuj napisy ręczne',
     transcriptFormat: 'Format eksportu',
     includeRaw: 'Dołącz surowy JSON yt-dlp (zaawansowane)',
-    embedMetadata: 'Osadź metadane'
+    embedMetadata: 'Osadź metadane',
+    embedAudioCover: 'Osadź miniaturę filmu jako okładkę',
+    embedAudioMetadata: 'Zapisz metadane audio',
+    downloadAsAudio: 'Pobierz jako audio (MP3)'
   },
   downloads: {
     title: 'Kolejka pobierań',
@@ -108,6 +111,8 @@ export const pl = {
     preferredQuality: 'Preferowana jakość wideo',
     preferredContainer: 'Preferowany kontener',
     preferredAudio: 'Preferowany format audio',
+    embedAudioCover: 'Osadź miniaturę jako okładkę audio',
+    embedAudioMetadata: 'Zapisz metadane audio',
     preferredTranscriptLang: 'Preferowany język napisów',
     existingFile: 'Istniejące pliki',
     maxConcurrent: 'Maks. równoległych pobierań',

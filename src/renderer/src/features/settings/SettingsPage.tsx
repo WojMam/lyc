@@ -156,6 +156,22 @@ export function SettingsPage(): React.JSX.Element {
                 <option value="opus">Opus</option>
               </select>
             </div>
+            <div className="flex items-center justify-between rounded-lg border border-border px-4 py-3 sm:col-span-2">
+              <Label htmlFor="embed-cover">{t.settings.embedAudioCover}</Label>
+              <Switch
+                id="embed-cover"
+                checked={settings.embedAudioThumbnail ?? true}
+                onCheckedChange={(v) => void save({ embedAudioThumbnail: v })}
+              />
+            </div>
+            <div className="flex items-center justify-between rounded-lg border border-border px-4 py-3 sm:col-span-2">
+              <Label htmlFor="embed-audio-meta">{t.settings.embedAudioMetadata}</Label>
+              <Switch
+                id="embed-audio-meta"
+                checked={settings.embedAudioMetadata ?? true}
+                onCheckedChange={(v) => void save({ embedAudioMetadata: v })}
+              />
+            </div>
             <div className="space-y-2">
               <Label>{t.settings.preferredTranscriptLang}</Label>
               <Input

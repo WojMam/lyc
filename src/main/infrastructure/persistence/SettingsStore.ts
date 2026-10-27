@@ -13,6 +13,8 @@ const DEFAULTS: ApplicationSettings = {
   preferredContainer: 'auto',
   preferredAudioFormat: 'mp3',
   preferredAudioQuality: 'vbr_high',
+  embedAudioThumbnail: true,
+  embedAudioMetadata: true,
   preferredTranscriptLanguage: 'pl',
   existingFilePolicy: 'rename',
   maxConcurrentDownloads: 1,

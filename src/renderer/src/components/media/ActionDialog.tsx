@@ -54,6 +54,8 @@ export function ActionDialog({
   const [audioQuality, setAudioQuality] = useState<AudioQuality>(
     settings?.preferredAudioQuality ?? 'vbr_high'
   )
+  const [embedAudioCover, setEmbedAudioCover] = useState(settings?.embedAudioThumbnail ?? true)
+  const [embedAudioMetadata, setEmbedAudioMetadata] = useState(settings?.embedAudioMetadata ?? true)
   const [language, setLanguage] = useState(
     settings?.preferredTranscriptLanguage ?? video.subtitles[0]?.language ?? 'en'
   )
@@ -109,7 +111,14 @@ export function ActionDialog({
         request = {
           action: 'audio',
           ...base,
-          options: { format: audioFormat, quality: audioQuality, outputDirectory }
+          options: {
+            format: audioFormat,
+            quality: audioQuality,
+            outputDirectory,
+            embedThumbnail: embedAudioCover,
+            embedMetadata: embedAudioMetadata,
+            albumTitle: video.playlistTitle
+          }
         }
         break
       case 'transcript':
@@ -226,6 +235,22 @@ export function ActionDialog({
                   <option value="192k">192 kbps</option>
                   <option value="128k">128 kbps</option>
                 </select>
+              </div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="audio-cover">{t.dialog.embedAudioCover}</Label>
+                <Switch
+                  id="audio-cover"
+                  checked={embedAudioCover}
+                  onCheckedChange={setEmbedAudioCover}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="audio-meta">{t.dialog.embedAudioMetadata}</Label>
+                <Switch
+                  id="audio-meta"
+                  checked={embedAudioMetadata}
+                  onCheckedChange={setEmbedAudioMetadata}
+                />
               </div>
             </>
           )}

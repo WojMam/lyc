@@ -71,7 +71,10 @@ export const en: MessageCatalog = {
     preferManual: 'Prefer manual captions',
     transcriptFormat: 'Export format',
     includeRaw: 'Include raw yt-dlp JSON (advanced)',
-    embedMetadata: 'Embed metadata'
+    embedMetadata: 'Embed metadata',
+    embedAudioCover: 'Embed video thumbnail as cover art',
+    embedAudioMetadata: 'Write audio metadata',
+    downloadAsAudio: 'Download as audio (MP3)'
   },
   downloads: {
     title: 'Download queue',
@@ -110,6 +113,8 @@ export const en: MessageCatalog = {
     preferredQuality: 'Preferred video quality',
     preferredContainer: 'Preferred container',
     preferredAudio: 'Preferred audio format',
+    embedAudioCover: 'Embed thumbnail as audio cover',
+    embedAudioMetadata: 'Write audio metadata',
     preferredTranscriptLang: 'Preferred caption language',
     existingFile: 'Existing files',
     maxConcurrent: 'Max concurrent downloads',

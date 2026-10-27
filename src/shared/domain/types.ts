@@ -174,6 +174,10 @@ export interface ApplicationSettings {
   preferredContainer: VideoContainer
   preferredAudioFormat: AudioFormat
   preferredAudioQuality: AudioQuality
+  /** Default: embed YouTube thumbnail as audio cover art */
+  embedAudioThumbnail: boolean
+  /** Default: write title/artist/etc. into audio tags */
+  embedAudioMetadata: boolean
   preferredTranscriptLanguage: string
   existingFilePolicy: ExistingFilePolicy
   maxConcurrentDownloads: number
