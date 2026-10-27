@@ -1,0 +1,43 @@
+appId: com.localyoutube.companion
+productName: Local YouTube Companion
+copyright: Copyright © 2026 Local YouTube Companion
+directories:
+  buildResources: resources
+  output: release
+files:
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!tests/*'
+  - '!docs/*'
+  - '!scripts/*'
+  - '!tools/*'
+  - '!vendor/*'
+  - '!{.eslintignore,.eslintrc*,.prettierignore,.prettierrc*,dev-app-update.yml,CHANGELOG.md}'
+  - '!{tsconfig.json,tsconfig.*.json,vitest*.ts,vite.config.ts,electron.vite.config.ts}'
+  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+asar: true
+extraResources:
+  - from: vendor/bin
+    to: bin
+    filter:
+      - '**/*'
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+  artifactName: ${productName}-${version}-${arch}.${ext}
+  executableName: LocalYouTubeCompanion
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: Local YouTube Companion
+  artifactName: ${productName}-${version}-setup.${ext}
+portable:
+  artifactName: ${productName}-${version}-portable.${ext}
+npmRebuild: false

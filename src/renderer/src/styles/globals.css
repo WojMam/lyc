@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 28% 7%;
+    --foreground: 210 40% 96%;
+    --card: 222 24% 10%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 24% 10%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 234 89% 64%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 16% 16%;
+    --secondary-foreground: 210 30% 90%;
+    --muted: 222 14% 14%;
+    --muted-foreground: 215 16% 62%;
+    --accent: 234 40% 18%;
+    --accent-foreground: 210 40% 96%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 222 14% 18%;
+    --input: 222 14% 18%;
+    --ring: 234 89% 64%;
+    --radius: 0.75rem;
+    --success: 152 60% 42%;
+    --warning: 38 92% 50%;
+  }
+
+  .light {
+    --background: 220 30% 98%;
+    --foreground: 222 40% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 40% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 40% 12%;
+    --primary: 234 78% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 20% 94%;
+    --secondary-foreground: 222 30% 20%;
+    --muted: 220 18% 94%;
+    --muted-foreground: 220 12% 42%;
+    --accent: 234 40% 94%;
+    --accent-foreground: 234 50% 30%;
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 16% 88%;
+    --input: 220 16% 88%;
+    --ring: 234 78% 52%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 10% -10%, hsl(234 89% 64% / 0.12), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 0%, hsl(250 70% 50% / 0.08), transparent);
+    background-attachment: fixed;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+}

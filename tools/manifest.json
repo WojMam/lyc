@@ -1,0 +1,22 @@
+{
+  "ytDlp": {
+    "version": "2026.08.19",
+    "url": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.08.19/yt-dlp.exe",
+    "sha256Url": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.08.19/SHA2-256SUMS",
+    "filename": "yt-dlp.exe"
+  },
+  "deno": {
+    "version": "2.5.4",
+    "url": "https://github.com/denoland/deno/releases/download/v2.5.4/deno-x86_64-pc-windows-msvc.zip",
+    "sha256Url": "https://github.com/denoland/deno/releases/download/v2.5.4/deno-x86_64-pc-windows-msvc.zip.sha256sum",
+    "filename": "deno.exe",
+    "zipEntry": "deno.exe"
+  },
+  "ffmpeg": {
+    "version": "n8.1",
+    "url": "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n8.1-latest-win64-gpl-8.1.zip",
+    "sha256Url": "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/checksums.sha256",
+    "assetName": "ffmpeg-n8.1-latest-win64-gpl-8.1.zip",
+    "binaries": ["ffmpeg.exe", "ffprobe.exe"]
+  }
+}
