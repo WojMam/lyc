@@ -257,9 +257,13 @@ export class YtDlpMediaProvider implements IMediaProvider {
   ): Promise<string[]> {
     const { ytDlp, ffmpegDir, deno } = await this.requireTools()
     await ensureWritableDirectory(request.options.outputDirectory)
+    const fileTitle =
+      request.options.metadataSource === 'custom' && request.options.customTitle?.trim()
+        ? request.options.customTitle.trim()
+        : request.title
     const outTemplate = path.join(
       request.options.outputDirectory,
-      `${sanitizeFilename(request.title)} [${request.videoId}].%(ext)s`
+      `${sanitizeFilename(fileTitle)} [${request.videoId}].%(ext)s`
     )
 
     const embedThumbnail = request.options.embedThumbnail !== false
@@ -280,6 +284,9 @@ export class YtDlpMediaProvider implements IMediaProvider {
         format: request.options.format,
         embedThumbnail,
         embedMetadata,
+        metadataSource: request.options.metadataSource,
+        customTitle: request.options.customTitle,
+        customArtist: request.options.customArtist,
         albumTitle: request.options.albumTitle
       }),
       '--newline',

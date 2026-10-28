@@ -72,6 +72,11 @@ export const pl = {
     embedMetadata: 'Osadź metadane',
     embedAudioCover: 'Osadź miniaturę filmu jako okładkę',
     embedAudioMetadata: 'Zapisz metadane audio',
+    metadataSource: 'Źródło tytułu i artysty',
+    metadataFromYoutube: 'Z YouTube',
+    metadataCustom: 'Własne',
+    customTitle: 'Tytuł',
+    customArtist: 'Artysta',
     downloadAsAudio: 'Pobierz jako audio (MP3)'
   },
   downloads: {

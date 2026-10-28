@@ -46,6 +46,34 @@ describe('buildAudioEmbedArgs', () => {
     expect(albumArg).toContain('My Playlist')
   })
 
+  it('overrides title and artist when metadataSource is custom', () => {
+    const args = buildAudioEmbedArgs({
+      format: 'mp3',
+      embedThumbnail: false,
+      embedMetadata: true,
+      metadataSource: 'custom',
+      customTitle: 'My Song (Live)',
+      customArtist: 'The Artist'
+    })
+    const titleArg = args.find((a) => a.includes('meta_title'))
+    const artistArg = args.find((a) => a.includes('meta_artist'))
+    expect(titleArg).toContain('My Song')
+    expect(artistArg).toContain('The Artist')
+  })
+
+  it('does not override title/artist for youtube source', () => {
+    const args = buildAudioEmbedArgs({
+      format: 'mp3',
+      embedThumbnail: false,
+      embedMetadata: true,
+      metadataSource: 'youtube',
+      customTitle: 'Ignored',
+      customArtist: 'Ignored'
+    })
+    expect(args.some((a) => a.includes('meta_title'))).toBe(false)
+    expect(args.some((a) => a.includes('meta_artist'))).toBe(false)
+  })
+
   it('returns empty when both options disabled', () => {
     const args = buildAudioEmbedArgs({
       format: 'opus',
@@ -66,6 +94,7 @@ describe('audio options schema defaults', () => {
     })
     expect(parsed.embedThumbnail).toBe(true)
     expect(parsed.embedMetadata).toBe(true)
+    expect(parsed.metadataSource).toBe('youtube')
   })
 
   it('preserves explicit false values', async () => {

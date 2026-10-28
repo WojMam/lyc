@@ -81,6 +81,9 @@ export function buildAudioEmbedArgs(options: {
   format: 'mp3' | 'm4a' | 'opus'
   embedThumbnail: boolean
   embedMetadata: boolean
+  metadataSource?: 'youtube' | 'custom'
+  customTitle?: string
+  customArtist?: string
   albumTitle?: string
 }): string[] {
   const args: string[] = []
@@ -88,6 +91,16 @@ export function buildAudioEmbedArgs(options: {
   if (options.embedMetadata) {
     // Writes title, artist/uploader, and purl (source URL) among other available tags
     args.push('--embed-metadata')
+    if (options.metadataSource === 'custom') {
+      const title = options.customTitle?.trim()
+      const artist = options.customArtist?.trim()
+      if (title) {
+        args.push('--parse-metadata', `:(?P<meta_title>${escapeRegex(title)})`)
+      }
+      if (artist) {
+        args.push('--parse-metadata', `:(?P<meta_artist>${escapeRegex(artist)})`)
+      }
+    }
     if (options.albumTitle?.trim()) {
       // Escape regex metacharacters for a literal album assignment from playlist title
       const album = escapeRegex(options.albumTitle.trim())

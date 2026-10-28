@@ -74,6 +74,11 @@ export const en: MessageCatalog = {
     embedMetadata: 'Embed metadata',
     embedAudioCover: 'Embed video thumbnail as cover art',
     embedAudioMetadata: 'Write audio metadata',
+    metadataSource: 'Title and artist source',
+    metadataFromYoutube: 'From YouTube',
+    metadataCustom: 'Custom',
+    customTitle: 'Title',
+    customArtist: 'Artist',
     downloadAsAudio: 'Download as audio (MP3)'
   },
   downloads: {

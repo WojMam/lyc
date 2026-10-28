@@ -56,6 +56,9 @@ export function ActionDialog({
   )
   const [embedAudioCover, setEmbedAudioCover] = useState(settings?.embedAudioThumbnail ?? true)
   const [embedAudioMetadata, setEmbedAudioMetadata] = useState(settings?.embedAudioMetadata ?? true)
+  const [metadataSource, setMetadataSource] = useState<'youtube' | 'custom'>('youtube')
+  const [customTitle, setCustomTitle] = useState(video.title)
+  const [customArtist, setCustomArtist] = useState(video.channel ?? '')
   const [language, setLanguage] = useState(
     settings?.preferredTranscriptLanguage ?? video.subtitles[0]?.language ?? 'en'
   )
@@ -117,6 +120,11 @@ export function ActionDialog({
             outputDirectory,
             embedThumbnail: embedAudioCover,
             embedMetadata: embedAudioMetadata,
+            metadataSource: embedAudioMetadata ? metadataSource : 'youtube',
+            customTitle:
+              embedAudioMetadata && metadataSource === 'custom' ? customTitle.trim() : undefined,
+            customArtist:
+              embedAudioMetadata && metadataSource === 'custom' ? customArtist.trim() : undefined,
             albumTitle: video.playlistTitle
           }
         }
@@ -252,6 +260,53 @@ export function ActionDialog({
                   onCheckedChange={setEmbedAudioMetadata}
                 />
               </div>
+              {embedAudioMetadata && (
+                <div className="space-y-3 rounded-md border border-border p-3">
+                  <Label>{t.dialog.metadataSource}</Label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="radio"
+                        name="metadata-source"
+                        checked={metadataSource === 'youtube'}
+                        onChange={() => setMetadataSource('youtube')}
+                      />
+                      {t.dialog.metadataFromYoutube}
+                    </label>
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="radio"
+                        name="metadata-source"
+                        checked={metadataSource === 'custom'}
+                        onChange={() => setMetadataSource('custom')}
+                      />
+                      {t.dialog.metadataCustom}
+                    </label>
+                  </div>
+                  {metadataSource === 'custom' && (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="custom-title">{t.dialog.customTitle}</Label>
+                        <Input
+                          id="custom-title"
+                          value={customTitle}
+                          onChange={(e) => setCustomTitle(e.target.value)}
+                          placeholder={video.title}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="custom-artist">{t.dialog.customArtist}</Label>
+                        <Input
+                          id="custom-artist"
+                          value={customArtist}
+                          onChange={(e) => setCustomArtist(e.target.value)}
+                          placeholder={video.channel ?? ''}
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
             </>
           )}
 

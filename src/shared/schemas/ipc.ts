@@ -24,12 +24,18 @@ export const videoDownloadOptionsSchema = z.object({
   outputDirectory: z.string().min(1)
 })
 
+export const audioMetadataSourceSchema = z.enum(['youtube', 'custom'])
+
 export const audioDownloadOptionsSchema = z.object({
   format: audioFormatSchema,
   quality: audioQualitySchema,
   outputDirectory: z.string().min(1),
   embedThumbnail: z.boolean().default(true),
   embedMetadata: z.boolean().default(true),
+  /** youtube = tags from yt-dlp; custom = use customTitle / customArtist overrides */
+  metadataSource: audioMetadataSourceSchema.default('youtube'),
+  customTitle: z.string().optional(),
+  customArtist: z.string().optional(),
   /** When downloading from a playlist, optional album tag (playlist title). */
   albumTitle: z.string().optional()
 })
